@@ -1,0 +1,9 @@
+[package]
+name = "model-tile"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+description = "The model tile format of ImmersiveMap (version 6): its decoder, its writer and the fallback decode of its ASTC textures."
+
+[dependencies]
+astc-decode = "0.3"

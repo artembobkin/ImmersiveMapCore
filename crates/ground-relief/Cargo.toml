@@ -1,0 +1,12 @@
+[package]
+name = "ground-relief"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+image-webp = "0.2"
+png = "0.18"
+
+[dev-dependencies]
+half = "2"

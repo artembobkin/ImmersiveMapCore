@@ -1,0 +1,11 @@
+[package]
+name = "layer-mesh"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+description = "The layers of the app's data: GeoJSON read into flat shapes (decision B11, serde_json) and the shapes tessellated into GPU-ready meshes, a port of the Swift LayerMeshBuilder."
+
+[dependencies]
+earcut.workspace = true
+serde = "1"
+serde_json = { version = "1", features = ["raw_value"] }

@@ -1,0 +1,14 @@
+[package]
+name = "map-worker"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+description = "What a host's worker runs off the main thread: the configured tile parse and the decode of a model tile."
+
+[dependencies]
+tile-parse = { path = "../tile-parse" }
+map-style = { path = "../map-style" }
+text-layout = { path = "../text-layout" }
+model-tile = { path = "../model-tile" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

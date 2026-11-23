@@ -1,0 +1,17 @@
+[package]
+name = "tile-parse"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+mvt.workspace = true
+earcut.workspace = true
+tile-flattening = { path = "../tile-flattening" }
+map-style = { path = "../map-style" }
+text-layout = { path = "../text-layout" }
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+serde_json = "1"
+flate2 = { version = "1.1", default-features = false, features = ["zlib-rs"] }

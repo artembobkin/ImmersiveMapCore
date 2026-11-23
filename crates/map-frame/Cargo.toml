@@ -1,0 +1,15 @@
+[package]
+name = "map-frame"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+description = "The per-frame logic of the map: the tile placement planner, the label collisions and the pin collision layout."
+
+[features]
+# The pin layout takes its sines, cosines, powers and logarithms from the JS
+# engine's `Math` when built for Wasm, so it matches a TypeScript solver bit
+# for bit. Off, it takes Rust's own on every target.
+js-math = ["dep:js-sys"]
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = { version = "0.3", optional = true }
