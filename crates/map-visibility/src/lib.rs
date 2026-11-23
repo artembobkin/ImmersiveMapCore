@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 //! The frame's tile coverage, free of any host: which tiles a camera pose
-//! draws, at which zooms, a port of the Swift engine's `TileCulling`. The
-//! flat map's coverage is here (`flat`): the frustum's footprint on the
-//! plane (`polygon`) cut into bands by the ring rules (`rules`).
+//! draws, at which zooms, a port of the Swift engine's `TileCulling`. On
+//! the plane (`flat`) the frustum's footprint (`polygon`) is cut into bands
+//! by the ring rules (`rules`). On the sphere (`globe`) the same rules are
+//! read off the sphere's grid, with the frustum (`frustum`) and the horizon
+//! in the footprint's place.
 //!
 //! A host calls it once per frame with the camera's matrix and reads the
 //! targets as the flat records the placement planner of `map-frame` takes,
@@ -16,6 +18,8 @@
 #![allow(clippy::neg_cmp_op_on_partial_ord, clippy::manual_clamp, clippy::manual_range_contains)]
 
 pub mod flat;
+pub mod frustum;
+pub mod globe;
 pub mod polygon;
 pub mod rules;
 
