@@ -34,6 +34,11 @@ pub fn default_rules() -> Vec<FlatRingRule> {
     vec![FlatRingRule::new(0, 1.0), band(1, 2.0, 128, 2), band(2, 3.0, 128, 1), band(4, 9.0, 64, 3)]
 }
 
+/// The rules of the globe's zooms: every ring as geometry, the far one without lines.
+pub fn globe_default_rules() -> Vec<FlatRingRule> {
+    vec![FlatRingRule::new(0, 1.0), FlatRingRule { draws_lines: false, ..FlatRingRule::new(2, 3.0) }]
+}
+
 /// The nearest size a texture band is baked at, the first of two equally near.
 pub fn normalized_raster_size(size: Option<u32>) -> Option<u32> {
     let size = size? as i64;

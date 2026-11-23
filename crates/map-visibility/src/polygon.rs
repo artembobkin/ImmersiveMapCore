@@ -48,6 +48,11 @@ impl CoveragePolygon {
         &self.vertices
     }
 
+    /// The axis-aligned bounds: the least and the greatest x, then y.
+    pub fn bounds(&self) -> (f64, f64, f64, f64) {
+        (self.min_x, self.max_x, self.min_y, self.max_y)
+    }
+
     /// The polygon scaled about a point by `factor`: the footprint pushed out
     /// from the camera's ground point, which the far texture bands are asked
     /// for ahead of a turn. Convex stays convex, and the winding is kept.
