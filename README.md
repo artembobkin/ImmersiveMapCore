@@ -20,7 +20,7 @@ It is used by [ImmersiveMap Web](https://github.com/artembobkin/ImmersiveMapWeb)
 | `ground-relief` | The decode of terrain tiles (Terrarium and Mapbox, WebP or PNG) to half-float heights. |
 | `layer-mesh` | The layers of an app's own data: GeoJSON to flat shapes, shapes to a mesh, the mesh file. |
 | `model-tile` | The model tile's format, read and written. |
-| `map-frame` | The per-frame logic: the tile placement planner, the label collision solve, the pin collision layout. |
+| `map-frame` | The per-frame logic: the tile placement planner, the label collision solve, the pin collision layout, the tile grid's frame. |
 | `map-worker` | What a host's worker runs: the tile parse as the settings configure it, the decode of a model tile. |
 
 ## Building and testing

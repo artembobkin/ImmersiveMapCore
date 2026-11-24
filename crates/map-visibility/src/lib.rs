@@ -6,7 +6,8 @@
 //! the plane (`flat`) the frustum's footprint (`polygon`) is cut into bands
 //! by the ring rules (`rules`). On the sphere (`globe`) the same rules are
 //! read off the sphere's grid, with the frustum (`frustum`) and the horizon
-//! in the footprint's place.
+//! in the footprint's place. The tile grid (`grid`) is a coverage of its own:
+//! the tiles of one zoom in view, the nearest first, by the same tests.
 //!
 //! A host calls it once per frame with the camera's matrix and reads the
 //! targets as the flat records the placement planner of `map-frame` takes,
@@ -21,6 +22,7 @@ pub mod culling;
 pub mod flat;
 pub mod frustum;
 pub mod globe;
+pub mod grid;
 pub mod polygon;
 pub mod rule_sets;
 pub mod rules;

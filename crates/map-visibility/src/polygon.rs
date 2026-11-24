@@ -92,6 +92,37 @@ impl CoveragePolygon {
         }
     }
 
+    /// Whether an axis-aligned square of the plane lies wholly within the
+    /// polygon: the polygon is convex, so the square does when each of its
+    /// corners is on the one side of every edge.
+    pub fn contains_square(&self, min_x: f64, min_y: f64, max_x: f64, max_y: f64) -> bool {
+        if min_x < self.min_x || max_x > self.max_x || min_y < self.min_y || max_y > self.max_y {
+            return false;
+        }
+        let vertices = &self.vertices;
+        if vertices.len() < 3 {
+            return false;
+        }
+        let mut side = 0.0f64;
+        for index in 0..vertices.len() {
+            let start = vertices[index];
+            let end = vertices[(index + 1) % vertices.len()];
+            let (edge_x, edge_y) = (end[0] - start[0], end[1] - start[1]);
+            for corner in [[min_x, min_y], [max_x, min_y], [max_x, max_y], [min_x, max_y]] {
+                let cross = edge_x * (corner[1] - start[1]) - edge_y * (corner[0] - start[0]);
+                if cross == 0.0 {
+                    continue;
+                }
+                if side == 0.0 {
+                    side = cross.signum();
+                } else if cross.signum() != side {
+                    return false;
+                }
+            }
+        }
+        true
+    }
+
     /// The polygon cut by the line through `a` and `b`, keeping the side
     /// `inside` lies on (Sutherland-Hodgman against one half-plane). `None`
     /// when nothing of it is left, or too little to have an area.

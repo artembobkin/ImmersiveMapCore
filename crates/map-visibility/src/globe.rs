@@ -31,7 +31,9 @@ use crate::{Target, VisibleTile};
 /// floor of every placement on the sphere and what the ground past the last
 /// rule is asked for.
 pub const FLOOR_ZOOM: i32 = 0;
-const TRANSITION_LOW_ZOOM_FALLBACK_LIMIT: i32 = 3;
+/// Through the unroll the visibility tests do not hold at the zooms up to
+/// this one, and every tile of such a zoom is taken.
+pub const TRANSITION_LOW_ZOOM_FALLBACK_LIMIT: i32 = 3;
 
 /// A column and row of the target zoom's grid.
 pub type GridCell = (i64, i64);
@@ -161,10 +163,11 @@ pub struct GlobeBounds {
 }
 
 /// What the visibility tests read, taken off the frame once.
-struct Visibility {
+#[derive(Debug, Clone, Copy)]
+pub struct Visibility {
     radius: f64,
     globe_center: [f64; 3],
-    transition: f64,
+    pub(crate) transition: f64,
     /// The pan's rotation as the three columns a direction is dotted with.
     rotation: [f64; 9],
     globe_to_camera: [f64; 3],
@@ -173,7 +176,7 @@ struct Visibility {
 }
 
 impl Visibility {
-    fn new(globe: &GlobeUniform, eye: [f64; 3]) -> Visibility {
+    pub fn new(globe: &GlobeUniform, eye: [f64; 3]) -> Visibility {
         let pan_latitude = globe.pan_y * max_mercator_latitude();
         let pan_longitude = globe.pan_x * PI;
         let (cx, sx) = ((-pan_latitude).cos(), (-pan_latitude).sin());
@@ -278,33 +281,43 @@ struct Walk<'a> {
     bounds: &'a mut GlobeBounds,
 }
 
-enum Evaluation {
+/// Whether a tile of the walk toward a target zoom shows.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Evaluation {
     RejectFrustum,
     RejectHorizon,
     Descend,
     AcceptWholeSubtree,
 }
 
+/// Whether a tile of the walk toward `target_zoom` shows: its bounding sphere
+/// against the frustum and the horizon. The tile grid's own walk asks it too
+/// (`grid`), so the two never disagree about what the sphere shows.
+pub fn evaluate(tile: (i32, i32, i32), target_zoom: i32, frustum: &Frustum, visibility: &Visibility, bounds: &mut GlobeBounds) -> Evaluation {
+    let (x, y, z) = tile;
+    let minimum_reject_zoom = target_zoom.min(if visibility.transition > 0.0 { 4 } else { 3 });
+    let rejects = z >= minimum_reject_zoom;
+    let whole_subtree = z < target_zoom;
+    if !rejects && !whole_subtree {
+        return Evaluation::Descend;
+    }
+    let bound = *bounds.cache.entry(tile_index(x, y, z)).or_insert_with(|| static_bound(x, y, z));
+    let (center, radius) = visibility.tile_bound(&bound);
+    if rejects && !frustum.is_sphere_visible(center, radius) {
+        return Evaluation::RejectFrustum;
+    }
+    if rejects && !visibility.may_pass_horizon(center, radius) {
+        return Evaluation::RejectHorizon;
+    }
+    if whole_subtree && frustum.contains_sphere(center, radius) && visibility.passes_horizon_entirely(center, radius) {
+        return Evaluation::AcceptWholeSubtree;
+    }
+    Evaluation::Descend
+}
+
 impl Walk<'_> {
     fn evaluate(&mut self, x: i32, y: i32, z: i32) -> Evaluation {
-        let minimum_reject_zoom = self.target_zoom.min(if self.visibility.transition > 0.0 { 4 } else { 3 });
-        let rejects = z >= minimum_reject_zoom;
-        let whole_subtree = z < self.target_zoom;
-        if !rejects && !whole_subtree {
-            return Evaluation::Descend;
-        }
-        let bound = *self.bounds.cache.entry(tile_index(x, y, z)).or_insert_with(|| static_bound(x, y, z));
-        let (center, radius) = self.visibility.tile_bound(&bound);
-        if rejects && !self.frustum.is_sphere_visible(center, radius) {
-            return Evaluation::RejectFrustum;
-        }
-        if rejects && !self.visibility.may_pass_horizon(center, radius) {
-            return Evaluation::RejectHorizon;
-        }
-        if whole_subtree && self.frustum.contains_sphere(center, radius) && self.visibility.passes_horizon_entirely(center, radius) {
-            return Evaluation::AcceptWholeSubtree;
-        }
-        Evaluation::Descend
+        evaluate((x, y, z), self.target_zoom, self.frustum, &self.visibility, self.bounds)
     }
 
     fn place(&mut self, x: i32, y: i32, z: i32, lines: bool, labels: bool, raster_size: Option<u32>) {
