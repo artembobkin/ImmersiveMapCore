@@ -1,0 +1,9 @@
+[package]
+name = "map-camera"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+description = "The map's camera: its state, the globe-to-plane presentation it resolves to, and the render camera of a frame."
+
+[dependencies]
+map-geo = { path = "../map-geo" }

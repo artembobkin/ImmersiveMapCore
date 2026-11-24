@@ -19,6 +19,10 @@
 use std::collections::{HashMap, HashSet};
 use std::f64::consts::PI;
 
+use map_geo::projection::{clamp_normalized_world_y, latitude_from_normalized_world_y, longitude_from_normalized_world_x, max_mercator_latitude, wrap_normalized_world_x};
+
+pub use map_geo::GlobeUniform;
+
 use crate::frustum::Frustum;
 use crate::rules::{FlatRingBand, FlatRingRule, normalized};
 use crate::{Target, VisibleTile};
@@ -29,35 +33,6 @@ use crate::{Target, VisibleTile};
 pub const FLOOR_ZOOM: i32 = 0;
 const TRANSITION_LOW_ZOOM_FALLBACK_LIMIT: i32 = 3;
 
-/// The latitude, in radians, where Web Mercator's square world ends.
-pub fn max_mercator_latitude() -> f64 {
-    2.0 * PI.exp().atan() - PI * 0.5
-}
-
-fn wrap_normalized_world_x(x: f64) -> f64 {
-    let wrapped = x % 1.0;
-    if wrapped < 0.0 { wrapped + 1.0 } else { wrapped }
-}
-
-fn latitude_from_normalized_world_y(y: f64) -> f64 {
-    let mercator_y = (1.0 - 2.0 * y.max(0.0).min(1.0)) * PI;
-    2.0 * mercator_y.exp().atan() - PI * 0.5
-}
-
-fn longitude_from_normalized_world_x(x: f64) -> f64 {
-    wrap_normalized_world_x(x) * (2.0 * PI) - PI
-}
-
-/// The globe as a frame draws it: the pan as the globe reads it, the render
-/// radius, and the geometry phase of the unroll into the plane.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct GlobeUniform {
-    pub pan_x: f64,
-    pub pan_y: f64,
-    pub radius: f64,
-    pub transition: f64,
-}
-
 /// A column and row of the target zoom's grid.
 pub type GridCell = (i64, i64);
 
@@ -65,7 +40,7 @@ pub type GridCell = (i64, i64);
 /// east, y south), from the normalized world Mercator centre.
 pub fn center_in_tiles(center_world_mercator: [f64; 2], target_zoom: i32) -> [f64; 2] {
     let tiles_count = 2f64.powi(target_zoom);
-    [wrap_normalized_world_x(center_world_mercator[0]) * tiles_count, center_world_mercator[1].max(0.0).min(1.0) * tiles_count]
+    [wrap_normalized_world_x(center_world_mercator[0]) * tiles_count, clamp_normalized_world_y(center_world_mercator[1]) * tiles_count]
 }
 
 /// The target zoom's tile under the point the camera looks at, which the

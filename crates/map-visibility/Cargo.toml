@@ -6,3 +6,4 @@ version.workspace = true
 description = "The frame's tile coverage: which tiles a camera pose draws, at which zooms."
 
 [dependencies]
+map-geo = { path = "../map-geo" }

@@ -1,0 +1,8 @@
+[package]
+name = "map-geo"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+description = "The map's coordinate spaces and the matrix math every other crate reads: the Web Mercator projection, the render surfaces, the frustum."
+
+[dependencies]

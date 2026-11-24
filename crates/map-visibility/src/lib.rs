@@ -22,6 +22,7 @@ pub mod flat;
 pub mod frustum;
 pub mod globe;
 pub mod polygon;
+pub mod rule_sets;
 pub mod rules;
 
 /// A tile in a copy of the world: `wrap` is the copy, 0 the one under the camera's pan.
@@ -55,22 +56,4 @@ impl Target {
     }
 }
 
-/// The pan and the size of the flat render world.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct FlatRenderState {
-    pub pan: [f64; 2],
-    pub render_map_size: f64,
-}
-
-impl FlatRenderState {
-    /// A tile's origin (its south west corner) and size in the flat render
-    /// world. The row index grows south while the world is y up.
-    pub fn tile_origin_and_size(&self, x: i32, y: i32, z: i32, wrap: i32) -> [f64; 3] {
-        let tiles_count = 2f64.powi(z);
-        let tile_size = self.render_map_size / tiles_count;
-        let half = self.render_map_size * 0.5;
-        let origin_x = x as f64 * tile_size - half + self.pan[0] * half + wrap as f64 * self.render_map_size;
-        let origin_y = (tiles_count - y as f64 - 1.0) * tile_size - half - self.pan[1] * half;
-        [origin_x, origin_y, tile_size]
-    }
-}
+pub use map_geo::FlatRenderState;

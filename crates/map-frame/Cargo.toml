@@ -11,5 +11,10 @@ description = "The per-frame logic of the map: the tile placement planner, the l
 # for bit. Off, it takes Rust's own on every target.
 js-math = ["dep:js-sys"]
 
+[dependencies]
+map-camera = { path = "../map-camera" }
+map-geo = { path = "../map-geo" }
+map-visibility = { path = "../map-visibility" }
+
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 js-sys = { version = "0.3", optional = true }

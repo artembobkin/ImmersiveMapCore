@@ -39,6 +39,22 @@ pub fn globe_default_rules() -> Vec<FlatRingRule> {
     vec![FlatRingRule::new(0, 1.0), FlatRingRule { draws_lines: false, ..FlatRingRule::new(2, 3.0) }]
 }
 
+/// Zooms 15 and 16: the exact tiles to ring 1, one level coarser to ring 3
+/// as 64-texel textures with their lines and without labels, then four
+/// levels coarser to ring 13 as 128-texel textures.
+pub fn near_street_default_rules() -> Vec<FlatRingRule> {
+    vec![
+        FlatRingRule::new(0, 1.0),
+        FlatRingRule { draws_labels: false, raster_size: Some(64), ..FlatRingRule::new(1, 3.0) },
+        FlatRingRule { draws_lines: false, draws_labels: false, raster_size: Some(128), ..FlatRingRule::new(4, 13.0) },
+    ]
+}
+
+/// The closest street zooms: the exact tiles to ring 1, then two levels coarser to ring 2 as 128-texel textures.
+pub fn close_street_default_rules() -> Vec<FlatRingRule> {
+    vec![FlatRingRule::new(0, 1.0), FlatRingRule { draws_lines: false, draws_labels: false, raster_size: Some(128), ..FlatRingRule::new(2, 2.0) }]
+}
+
 /// The nearest size a texture band is baked at, the first of two equally near.
 pub fn normalized_raster_size(size: Option<u32>) -> Option<u32> {
     let size = size? as i64;

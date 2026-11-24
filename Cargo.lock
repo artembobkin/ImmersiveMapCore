@@ -169,11 +169,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "map-camera"
+version = "0.1.0"
+dependencies = [
+ "map-geo",
+]
+
+[[package]]
 name = "map-frame"
 version = "0.1.0"
 dependencies = [
  "js-sys",
+ "map-camera",
+ "map-geo",
+ "map-visibility",
 ]
+
+[[package]]
+name = "map-geo"
+version = "0.1.0"
 
 [[package]]
 name = "map-style"
@@ -187,6 +201,9 @@ dependencies = [
 [[package]]
 name = "map-visibility"
 version = "0.1.0"
+dependencies = [
+ "map-geo",
+]
 
 [[package]]
 name = "map-worker"
