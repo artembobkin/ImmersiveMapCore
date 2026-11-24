@@ -211,7 +211,9 @@ mod tests {
 
     #[test]
     fn the_mapterhorn_fixtures_decode_to_alpine_heights() {
-        let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/terrain");
+        // The fixtures `FIXTURES` names, as on a device the tests are pushed to, else the workspace's.
+        let root = std::env::var_os("FIXTURES").map(std::path::PathBuf::from).unwrap_or_else(|| std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures"));
+        let directory = root.join("terrain");
         let Ok(entries) = std::fs::read_dir(&directory) else {
             // The fixtures are fetched once by scripts/fetch-fixtures.mjs and are not in git.
             eprintln!("no fixtures at {}: run `node scripts/fetch-fixtures.mjs`", directory.display());

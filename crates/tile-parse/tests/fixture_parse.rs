@@ -21,8 +21,11 @@ use tile_parse::tile::Tile;
 const ARENA_FIXED_SPAN_COUNT: usize = 116;
 const LABEL_VERTEX_STRIDE: usize = 32;
 
+/// A tile of the fixtures `FIXTURES` names, as on a device the tests are
+/// pushed to, else the workspace's.
 fn fixture(z: i32, x: i32, y: i32) -> Option<Vec<u8>> {
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(format!("../../fixtures/tiles/{z}-{x}-{y}.mvt.gz"));
+    let root = std::env::var_os("FIXTURES").map(PathBuf::from).unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures"));
+    let path = root.join(format!("tiles/{z}-{x}-{y}.mvt.gz"));
     let compressed = std::fs::read(&path).ok()?;
     let mut bytes = Vec::new();
     flate2::read::GzDecoder::new(compressed.as_slice()).read_to_end(&mut bytes).expect("a fixture is a gzip member");

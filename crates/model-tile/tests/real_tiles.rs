@@ -12,8 +12,11 @@ use std::path::PathBuf;
 use model_tile::ModelTileContents;
 use model_tile::astc::{decode_rgba8, rgba8_byte_count};
 
+/// The fixtures `FIXTURES` names, as on a device the tests are pushed to,
+/// else the workspace's.
 fn fixture_directory() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/models")
+    let root = std::env::var_os("FIXTURES").map(PathBuf::from).unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures"));
+    root.join("models")
 }
 
 /// The model tiles in the fixtures, smallest first, with their z/x/y from

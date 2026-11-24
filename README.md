@@ -31,7 +31,16 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo check --workspace --target wasm32-unknown-unknown
 ```
 
-Some tests read real tiles from a `fixtures` directory at the root of the workspace and skip themselves without it. ImmersiveMap Web downloads them (`npm run fixtures` there), and a symbolic link to its `fixtures` directory is enough.
+Some tests read real tiles from a `fixtures` directory at the root of the workspace and skip themselves without it. ImmersiveMap Web downloads them (`npm run fixtures` there), and a symbolic link to its `fixtures` directory is enough. `FIXTURES` names another directory.
+
+### On an Android device
+
+```sh
+rustup target add aarch64-linux-android
+scripts/test-android.sh
+```
+
+The script builds the tests for `aarch64-linux-android` with the NDK's clang (`ANDROID_NDK_HOME`, else the newest NDK in `$ANDROID_HOME/ndk`), pushes them and the fixtures to the device `adb` sees, and runs each one there with `FIXTURES` naming the pushed fixtures. It fails if a test fails, or if a fixture test skips although the fixtures were pushed.
 
 ## Using it from a host
 
