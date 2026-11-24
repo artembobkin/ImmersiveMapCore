@@ -3,7 +3,8 @@
 
 //! The map's camera, free of any host: the camera state an app moves
 //! (`state`), the one funnel every change of it goes through, with the zoom
-//! and pitch ranges, the bounds and the terrain follow (`controller`), the presentation it resolves to, the globe, the plane and the
+//! and pitch ranges, the bounds and the terrain follow (`controller`), the
+//! flights and the eased follows that animate it (`flight`, `follow`), the presentation it resolves to, the globe, the plane and the
 //! unroll between them (`presentation`), and the render camera of a frame,
 //! its eye, matrices and frustum (`render_camera`).
 //!
@@ -16,6 +17,8 @@
 
 pub mod bounds;
 pub mod controller;
+pub mod flight;
+pub mod follow;
 pub mod presentation;
 pub mod render_camera;
 pub mod settings;
